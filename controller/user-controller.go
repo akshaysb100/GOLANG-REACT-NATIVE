@@ -8,7 +8,7 @@ import (
 )
 
 type UserController interface {
-	Signup(entity.User) entity.User
+	Signup(ctx *gin.Context) entity.User
 	FindAll() []entity.User
 }
 
@@ -16,13 +16,14 @@ type controller struct {
 	service service.UserServive
 }
 
-// func New(service service.UserServive) UserController {
-// 	return &controller{
-// 		service: service,
-// 	}
-// }
+func New(service service.UserServive) UserController {
+	return &controller{
+		service: service,
+	}
+}
 
 func (c *controller) FindAll() []entity.User {
+    
 	return c.service.FindAll()
 }
 

@@ -7,8 +7,16 @@ type UserServive interface {
 	FindAll() []entity.User
 }
 
+type IssueServive interface {
+	ShowIssues() []entity.Isuues
+}
+
 type userService struct {
 	user []entity.User
+}
+
+type issuesService struct {
+	issues []entity.Isuues
 }
 
 func New() UserServive {
@@ -24,4 +32,8 @@ func (service *userService) Signup(user entity.User) entity.User {
 
 func (service *userService) FindAll() []entity.User {
 	return service.user
+}
+
+func (service *issuesService) ShowIssues() []entity.Isuues {
+	return service.issues
 }
