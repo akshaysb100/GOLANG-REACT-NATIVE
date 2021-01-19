@@ -25,10 +25,10 @@ func ToUserDTO(userDTO entity.User) entity.UserDTO {
 }
 
 type ProductAPI struct {
-	ProductService service.ProductService
+	ProductService service.UserService
 }
 
-func ProvideProductAPI(p service.ProductService) ProductAPI {
+func ProvideUserAPI(p service.UserService) ProductAPI {
 	return ProductAPI{ProductService: p}
 }
 

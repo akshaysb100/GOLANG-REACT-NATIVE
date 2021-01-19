@@ -10,15 +10,15 @@ type UserServive interface {
 	FindAll() []entity.User
 }
 
-type ProductService struct {
-	ProductRepository repositories.ProductRepository
+type UserService struct {
+	ProductRepository repositories.UserRepository
 }
 
-func ProvideProductService(p repositories.ProductRepository) ProductService {
-	return ProductService{ProductRepository: p}
+func ProvideUserService(p repositories.UserRepository) UserService {
+	return UserService{ProductRepository: p}
 }
 
-func (p *ProductService) CreateUser(user entity.User) entity.User {
+func (p *UserService) CreateUser(user entity.User) entity.User {
 	p.ProductRepository.CreateUser(user)
 	return user
 }

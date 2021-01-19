@@ -12,22 +12,17 @@ import (
 
 var db *sql.DB
 
-type ProductRepository struct {
+type UserRepository struct {
 	DB *sql.DB
 }
 
-func ProvideProductRepostiory(DB *sql.DB) ProductRepository {
-	return ProductRepository{DB: DB}
+func ProvideUserRepostiory(DB *sql.DB) UserRepository {
+	return UserRepository{DB: DB}
 }
 
-func (p *ProductRepository) FindAll() {
+func (p *UserRepository) FindAll() {
 
-	// var users []entity.User
-	// p.DB.Find(&users)
-
-	// return users
-
-	rows, err := p.DB.Query("SELECT *FROM user")
+	rows, err := p.DB.Query("SELECT *FROM Users")
 	if err != nil {
 		fmt.Println(".....Error processing query")
 		fmt.Println(err)
@@ -42,24 +37,7 @@ func (p *ProductRepository) FindAll() {
 	}
 }
 
-func (p *ProductRepository) Save(user entity.User) entity.User {
-
-	// res, err := p.DB.Exec(`INSERT INTO user(ID, NAME, MOBILENUMBER) VALUES (1, 'Akshay', '7350003100')`, time.Now())
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// numDeleted, err := res.RowsAffected()
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// print(numDeleted)
-
-	//p.DB.Save(&user)
-	return user
-}
-
-func (p *ProductRepository) CreateUser(user entity.User) entity.User {
+func (p *UserRepository) CreateUser(user entity.User) entity.User {
 	ctx := context.Background()
 	var err error
 
@@ -75,8 +53,6 @@ func (p *ProductRepository) CreateUser(user entity.User) entity.User {
 	USERNAME = user.USERNAME
 	MOBILENUMBER = user.MOBILENUMBER
 
-	fmt.Println(ID, USERNAME, MOBILENUMBER)
-	// Check if database is alive.
 	err = p.DB.PingContext(ctx)
 	if err != nil {
 		return entity.User{}
@@ -105,7 +81,7 @@ func (p *ProductRepository) CreateUser(user entity.User) entity.User {
 	return users
 }
 
-func (p *ProductRepository) CreateIssue(issues entity.Isuues) entity.Isuues {
+func (p *UserRepository) CreateIssue(issues entity.Isuues) entity.Isuues {
 	ctx := context.Background()
 	var err error
 
@@ -146,7 +122,7 @@ func (p *ProductRepository) CreateIssue(issues entity.Isuues) entity.Isuues {
 	return issue
 }
 
-func ReadEmployees() (int, error) {
+func ShowUsers() (int, error) {
 	ctx := context.Background()
 
 	// Check if database is alive.
