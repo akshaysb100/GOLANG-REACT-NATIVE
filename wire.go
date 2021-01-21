@@ -1,7 +1,15 @@
 package main
 
-// func initProductAPI(db *sql.DB) controller.ProductAPI {
-// 	wire.Build(repositories.ProvideProductRepostiory, service.ProvideProductService, controller.ProvideProductAPI)
+// import (
+// 	"GOLANG-REACT-NATIVE/controller"
+// 	"GOLANG-REACT-NATIVE/repositories"
+// 	"GOLANG-REACT-NATIVE/service"
+// 	"database/sql"
 
-// 	return controller.ProductAPI{}
+// 	"github.com/google/wire"
+// )
+
+// func initProductAPI(db *sql.DB) controller.UserAPI {
+// 	wire.Build(repositories.ProvideUserRepostiory, service.ProvideUserService, controller.ProvideUserAPI)
+// 	return controller.UserAPI{}
 // }

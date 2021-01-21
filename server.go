@@ -1,15 +1,18 @@
 package main
 
 import (
+	"database/sql"
+
 	"GOLANG-REACT-NATIVE/controller"
 	"GOLANG-REACT-NATIVE/repositories"
 	"GOLANG-REACT-NATIVE/service"
-	"database/sql"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/godror/godror"
 	"github.com/google/wire"
 )
+
+var db *sql.DB
 
 func initDB() *sql.DB {
 	db, err := sql.Open("godror", `user="akshay" password="password123" connectString="localhost:1521/ORCL"
@@ -20,10 +23,9 @@ func initDB() *sql.DB {
 	return db
 }
 
-func initProductAPI(db *sql.DB) controller.ProductAPI {
+func initProductAPI(db *sql.DB) controller.UserAPI {
 	wire.Build(repositories.ProvideUserRepostiory, service.ProvideUserService, controller.ProvideUserAPI)
-
-	return controller.ProductAPI{}
+	return controller.UserAPI{}
 }
 
 func main() {
@@ -34,7 +36,10 @@ func main() {
 
 	r := gin.Default()
 
-	r.POST("/Users", userAPI.Create)
+	r.GET("/showUsers", userAPI.ShowUsers)
+	r.GET("/showIssues", userAPI.ShowIssues)
+	r.POST("/Users", userAPI.CreateUser)
+	r.POST("/issues", userAPI.CreateIssues)
 
 	err := r.Run()
 	if err != nil {

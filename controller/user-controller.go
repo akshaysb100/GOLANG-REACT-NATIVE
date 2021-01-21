@@ -3,71 +3,79 @@ package controller
 import (
 	"GOLANG-REACT-NATIVE/entity"
 	"GOLANG-REACT-NATIVE/service"
+	"GOLANG-REACT-NATIVE/usrmapper"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func ToUser(userDTO entity.UserDTO) entity.User {
-	return entity.User{
-		ID:           userDTO.ID,
-		USERNAME:     userDTO.USERNAME,
-		MOBILENUMBER: userDTO.MOBILENUMBER,
-	}
+type UserAPI struct {
+	UserService service.UserService
 }
 
-func ToUserDTO(userDTO entity.User) entity.UserDTO {
-	return entity.UserDTO{
-		ID:           userDTO.ID,
-		USERNAME:     userDTO.USERNAME,
-		MOBILENUMBER: userDTO.MOBILENUMBER,
-	}
+func ProvideUserAPI(p service.UserService) UserAPI {
+	return UserAPI{UserService: p}
 }
 
-type ProductAPI struct {
-	ProductService service.UserService
-}
-
-func ProvideUserAPI(p service.UserService) ProductAPI {
-	return ProductAPI{ProductService: p}
-}
-
-func (p *ProductAPI) Create(c *gin.Context) {
-	var userDTO entity.UserDTO
-	err := c.BindJSON(&userDTO)
+func (p *UserAPI) CreateUser(c *gin.Context) {
+	var toUser entity.User
+	err := c.BindJSON(&toUser)
 	if err != nil {
 		c.Status(http.StatusBadRequest)
 		return
 	}
 
-	createdProduct := p.ProductService.CreateUser(ToUser(userDTO))
-
-	c.JSON(http.StatusOK, gin.H{"Users": ToUserDTO(createdProduct)})
+	// createdUser := p.ProductService.CreateUser(usrmapper.ToUser(userDTO))
+	// usrmapper.ToUser(createdUser)
+	c.JSON(http.StatusOK, gin.H{"Users": p.UserService.CreateUser(usrmapper.ToUser(toUser))})
 }
 
-type UserController interface {
-	Signup(ctx *gin.Context) entity.User
-	FindAll() []entity.User
-}
-
-type controller struct {
-	service service.UserServive
-}
-
-func New(service service.UserServive) UserController {
-	return &controller{
-		service: service,
+func (p *UserAPI) CreateIssues(c *gin.Context) {
+	var toIssues entity.Isuues
+	fmt.Println(toIssues)
+	err := c.BindJSON(&toIssues)
+	if err != nil {
+		c.Status(http.StatusBadRequest)
+		return
 	}
+
+	// createdUser := p.ProductService.CreateUser(usrmapper.ToUser(userDTO))
+	// usrmapper.ToUser(createdUser)
+	c.JSON(http.StatusOK, gin.H{"issues": p.UserService.CreateIssue(usrmapper.ToIssues(toIssues))})
 }
 
-func (c *controller) FindAll() []entity.User {
-
-	return c.service.FindAll()
+func (p *UserAPI) ShowUsers(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"showUsers": p.UserService.ShowUsers()})
 }
 
-func (c *controller) Signup(ctx *gin.Context) entity.User {
-	var user entity.User
-	ctx.BindJSON(&user)
-	c.service.Signup(user)
-	return user
+func (p *UserAPI) ShowIssues(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"showIssues": p.UserService.ShowIssues()})
 }
+
+// type UserController interface {
+// 	Signup(ctx *gin.Context) entity.User
+// 	FindAll() []entity.User
+// }
+
+// type controller struct {
+// 	service service.UserServive
+// }
+
+// func New(service service.UserServive) UserController {
+// 	return &controller{
+// 		service: service,
+// 	}
+// }
+
+// func (c *controller) FindAll() []entity.User {
+
+// 	return c.service.FindAll()
+// }
+
+// func (c *controller) Signup(ctx *gin.Context) entity.User {
+// 	var user entity.User
+// 	ctx.BindJSON(&user)
+// 	c.service.Signup(user)
+// 	return user
+// }

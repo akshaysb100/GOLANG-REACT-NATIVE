@@ -11,17 +11,32 @@ type UserServive interface {
 }
 
 type UserService struct {
-	ProductRepository repositories.UserRepository
+	UserRepository repositories.UserRepository
 }
 
 func ProvideUserService(p repositories.UserRepository) UserService {
-	return UserService{ProductRepository: p}
+	return UserService{UserRepository: p}
 }
 
 func (p *UserService) CreateUser(user entity.User) entity.User {
-	p.ProductRepository.CreateUser(user)
-	return user
+	return p.UserRepository.CreateUser(user)
 }
+
+func (p *UserService) CreateIssue(issues entity.Isuues) entity.Isuues {
+	return p.UserRepository.CreateIssue(issues)
+}
+
+func (p *UserService) ShowUsers() int {
+	return p.UserRepository.ShowUsers()
+}
+
+func (p *UserService) ShowIssues() int {
+	return p.UserRepository.ShowIssues()
+}
+
+// func (p *UserService) ShowUsers() entity.Count {
+// 	return p.UserRepository.ShowUsers()
+// }
 
 // type IssueServive interface {
 // 	ShowIssues() []entity.Isuues

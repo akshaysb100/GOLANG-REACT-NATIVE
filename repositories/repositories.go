@@ -10,7 +10,14 @@ import (
 	_ "github.com/godror/godror"
 )
 
-var db *sql.DB
+func initDB() *sql.DB {
+	db, err := sql.Open("godror", `user="akshay" password="password123" connectString="localhost:1521/ORCL"
+                               libDir="/Users/akshaybavalekar/Downloads/instantclient_19_8"`)
+	if err != nil {
+		panic(err)
+	}
+	return db
+}
 
 type UserRepository struct {
 	DB *sql.DB
@@ -38,13 +45,11 @@ func (p *UserRepository) FindAll() {
 }
 
 func (p *UserRepository) CreateUser(user entity.User) entity.User {
+	db := initDB()
+
 	ctx := context.Background()
 	var err error
 
-	if p.DB == nil {
-		err = errors.New("CreateEmployee: db is null")
-		return entity.User{}
-	}
 	var ID string = ""
 	var USERNAME string = ""
 	var MOBILENUMBER string = ""
@@ -53,16 +58,25 @@ func (p *UserRepository) CreateUser(user entity.User) entity.User {
 	USERNAME = user.USERNAME
 	MOBILENUMBER = user.MOBILENUMBER
 
-	err = p.DB.PingContext(ctx)
+	err = db.PingContext(ctx)
 	if err != nil {
-		return entity.User{}
+		return entity.User{
+			ID:           ID,
+			USERNAME:     USERNAME,
+			MOBILENUMBER: MOBILENUMBER,
+		}
 	}
 
-	tsql := "INSERT INTO User (ID,USERNAME , MOBILENUMBER) VALUES (@ID, @USERNAME,@MOBILENUMBER); select convert(bigint, SCOPE_IDENTITY());"
+	tsql := "INSERT INTO User (ID,USERNAME , MOBILENUMBER) VALUES (@ID, @USERNAME, @MOBILENUMBER);"
+	//tsql := "INSERT INTO Users  (ID, USERNAME, MOBILENUMBER)  VALUES  ('1', 'Akshay','7350055254');"
 
-	stmt, err := p.DB.Prepare(tsql)
+	stmt, err := db.Prepare(tsql)
 	if err != nil {
-		return entity.User{}
+		return entity.User{
+			ID:           ID,
+			USERNAME:     USERNAME,
+			MOBILENUMBER: MOBILENUMBER,
+		}
 	}
 	defer stmt.Close()
 
@@ -75,7 +89,11 @@ func (p *UserRepository) CreateUser(user entity.User) entity.User {
 	var users entity.User
 	err = row.Scan(&users)
 	if err != nil {
-		return entity.User{}
+		return entity.User{
+			ID:           ID,
+			USERNAME:     USERNAME,
+			MOBILENUMBER: MOBILENUMBER,
+		}
 	}
 
 	return users
@@ -89,20 +107,19 @@ func (p *UserRepository) CreateIssue(issues entity.Isuues) entity.Isuues {
 		err = errors.New("CreateEmployee: db is null")
 		return entity.Isuues{}
 	}
-	var id string = ""
-	var name string = ""
+	var ID string = ""
+	var ISSUE string = ""
 
-	id = issues.ID
-	name = issues.Issues
+	ID = issues.ID
+	ISSUE = issues.ISSUE
 
-	fmt.Println(id, name)
-	// Check if database is alive.
+	//Check if database is alive.
 	err = p.DB.PingContext(ctx)
 	if err != nil {
 		return entity.Isuues{}
 	}
 
-	tsql := "INSERT INTO user (name, mobileNumber) VALUES (@id, @name,@mobileNumber); select convert(bigint, SCOPE_IDENTITY());"
+	tsql := "INSERT INTO issues (ID, ISSUE) VALUES (@ID, @ISSUE);"
 
 	stmt, err := p.DB.Prepare(tsql)
 	if err != nil {
@@ -112,7 +129,8 @@ func (p *UserRepository) CreateIssue(issues entity.Isuues) entity.Isuues {
 
 	row := stmt.QueryRowContext(
 		ctx,
-		sql.Named("Name", name))
+		sql.Named("Name", ID),
+		sql.Named("Name", ISSUE))
 	var issue entity.Isuues
 	err = row.Scan(&issues)
 	if err != nil {
@@ -122,21 +140,26 @@ func (p *UserRepository) CreateIssue(issues entity.Isuues) entity.Isuues {
 	return issue
 }
 
-func ShowUsers() (int, error) {
+func (p *UserRepository) ShowUsers() int {
+	db := initDB()
 	ctx := context.Background()
 
 	// Check if database is alive.
-	err := db.PingContext(ctx)
-	if err != nil {
-		return -1, err
+	if db == nil {
+		return -1
 	}
 
-	tsql := fmt.Sprintf("SELECT Id, Name, Location FROM TestSchema.Employees;")
+	err := db.PingContext(ctx)
+	if err != nil {
+		return -1
+	}
+
+	tsql := fmt.Sprintf("SELECT *FROM Users")
 
 	// Execute query
 	rows, err := db.QueryContext(ctx, tsql)
 	if err != nil {
-		return -1, err
+		return -1
 	}
 
 	defer rows.Close()
@@ -145,18 +168,60 @@ func ShowUsers() (int, error) {
 
 	// Iterate through the result set.
 	for rows.Next() {
-		var name, location string
-		var id int
+		var ID, USERNAME, MOBILENUMBER string
 
 		// Get values from row.
-		err := rows.Scan(&id, &name, &location)
+		err := rows.Scan(&ID, &USERNAME, &MOBILENUMBER)
 		if err != nil {
-			return -1, err
+			return -1
 		}
 
-		fmt.Printf("ID: %d, Name: %s, Location: %s\n", id, name, location)
+		//fmt.Printf("ID: %d, Name: %s, Location: %s\n", ID, USERNAME, MOBILENUMBER)
 		count++
 	}
 
-	return count, nil
+	return count
+}
+
+func (p *UserRepository) ShowIssues() int {
+	db := initDB()
+	ctx := context.Background()
+
+	// Check if database is alive.
+	if db == nil {
+		return -1
+	}
+
+	err := db.PingContext(ctx)
+	if err != nil {
+		return -1
+	}
+
+	tsql := fmt.Sprintf("SELECT *FROM issues")
+
+	// Execute query
+	rows, err := db.QueryContext(ctx, tsql)
+	if err != nil {
+		return -1
+	}
+
+	defer rows.Close()
+
+	var count int
+
+	// Iterate through the result set.
+	for rows.Next() {
+		var ID, ISSUE string
+
+		// Get values from row.
+		err := rows.Scan(&ID, &ISSUE)
+		if err != nil {
+			return -1
+		}
+
+		//fmt.Printf("ID: %d, Name: %s, Location: %s\n", ID, USERNAME, MOBILENUMBER)
+		count++
+	}
+
+	return count
 }

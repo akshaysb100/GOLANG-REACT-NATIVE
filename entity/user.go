@@ -1,7 +1,7 @@
 package entity
 
 type User struct {
-	ID           string `db:"id" json:"id"`
-	USERNAME     string `db:"username" json:"username"`
-	MOBILENUMBER string `db:"mobileNumber" json:"mobileNumber"`
+	ID           string `json:"ID"`
+	USERNAME     string `json:"USERNAME"`
+	MOBILENUMBER string `json:"MOBILENUMBER"`
 }
