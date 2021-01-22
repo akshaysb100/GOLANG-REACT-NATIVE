@@ -26,45 +26,10 @@ func (p *UserService) CreateIssue(issues entity.Isuues) entity.Isuues {
 	return p.UserRepository.CreateIssue(issues)
 }
 
-func (p *UserService) ShowUsers() int {
+func (p *UserService) ShowUsers() []*entity.User {
 	return p.UserRepository.ShowUsers()
 }
 
-func (p *UserService) ShowIssues() int {
+func (p *UserService) ShowIssues() []*entity.Isuues {
 	return p.UserRepository.ShowIssues()
 }
-
-// func (p *UserService) ShowUsers() entity.Count {
-// 	return p.UserRepository.ShowUsers()
-// }
-
-// type IssueServive interface {
-// 	ShowIssues() []entity.Isuues
-// }
-
-// type userService struct {
-// 	user []entity.User
-// }
-
-// type issuesService struct {
-// 	issues []entity.Isuues
-// }
-
-// func New() UserServive {
-// 	return &userService{
-// 		user: []entity.User{},
-// 	}
-// }
-
-// func (service *userService) Signup(user entity.User) entity.User {
-// 	service.user = append(service.user, user)
-// 	return user
-// }
-
-// func (service *userService) FindAll() []entity.User {
-// 	return service.user
-// }
-
-// func (service *issuesService) ShowIssues() []entity.Isuues {
-// 	return service.issues
-// }

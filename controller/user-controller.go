@@ -26,8 +26,6 @@ func (p *UserAPI) CreateUser(c *gin.Context) {
 		return
 	}
 
-	// createdUser := p.ProductService.CreateUser(usrmapper.ToUser(userDTO))
-	// usrmapper.ToUser(createdUser)
 	c.JSON(http.StatusOK, gin.H{"Users": p.UserService.CreateUser(usrmapper.ToUser(toUser))})
 }
 
@@ -40,8 +38,6 @@ func (p *UserAPI) CreateIssues(c *gin.Context) {
 		return
 	}
 
-	// createdUser := p.ProductService.CreateUser(usrmapper.ToUser(userDTO))
-	// usrmapper.ToUser(createdUser)
 	c.JSON(http.StatusOK, gin.H{"issues": p.UserService.CreateIssue(usrmapper.ToIssues(toIssues))})
 }
 
@@ -52,30 +48,3 @@ func (p *UserAPI) ShowUsers(c *gin.Context) {
 func (p *UserAPI) ShowIssues(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"showIssues": p.UserService.ShowIssues()})
 }
-
-// type UserController interface {
-// 	Signup(ctx *gin.Context) entity.User
-// 	FindAll() []entity.User
-// }
-
-// type controller struct {
-// 	service service.UserServive
-// }
-
-// func New(service service.UserServive) UserController {
-// 	return &controller{
-// 		service: service,
-// 	}
-// }
-
-// func (c *controller) FindAll() []entity.User {
-
-// 	return c.service.FindAll()
-// }
-
-// func (c *controller) Signup(ctx *gin.Context) entity.User {
-// 	var user entity.User
-// 	ctx.BindJSON(&user)
-// 	c.service.Signup(user)
-// 	return user
-// }

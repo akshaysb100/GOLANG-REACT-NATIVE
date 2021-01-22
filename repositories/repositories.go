@@ -4,8 +4,8 @@ import (
 	"GOLANG-REACT-NATIVE/entity"
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
+	"time"
 
 	_ "github.com/godror/godror"
 )
@@ -47,181 +47,101 @@ func (p *UserRepository) FindAll() {
 func (p *UserRepository) CreateUser(user entity.User) entity.User {
 	db := initDB()
 
-	ctx := context.Background()
-	var err error
-
-	var ID string = ""
-	var USERNAME string = ""
-	var MOBILENUMBER string = ""
-
-	ID = user.ID
-	USERNAME = user.USERNAME
-	MOBILENUMBER = user.MOBILENUMBER
-
-	err = db.PingContext(ctx)
+	sql := "INSERT INTO Users (ID, USERNAME, MOBILENUMBER) VALUES ( '" + user.ID + "', '" + user.USERNAME + "', '" + user.MOBILENUMBER + "' )"
+	_, err := db.Exec(sql)
 	if err != nil {
+		fmt.Println(err)
+	}
+
+	if err != nil {
+		fmt.Println("Error updating the database", "err", err)
 		return entity.User{
-			ID:           ID,
-			USERNAME:     USERNAME,
-			MOBILENUMBER: MOBILENUMBER,
+			ID:           "",
+			USERNAME:     "",
+			MOBILENUMBER: "",
 		}
 	}
 
-	tsql := "INSERT INTO User (ID,USERNAME , MOBILENUMBER) VALUES (@ID, @USERNAME, @MOBILENUMBER);"
-	//tsql := "INSERT INTO Users  (ID, USERNAME, MOBILENUMBER)  VALUES  ('1', 'Akshay','7350055254');"
+	return user
+}
 
-	stmt, err := db.Prepare(tsql)
+func (p *UserRepository) CreateIssue(issues entity.Isuues) entity.Isuues {
+	db := initDB()
+
+	sql := "INSERT INTO issues (ID, ISSUE) VALUES ( '" + issues.ID + "', '" + issues.ISSUE + "')"
+	_, err := db.Exec(sql)
 	if err != nil {
-		return entity.User{
-			ID:           ID,
-			USERNAME:     USERNAME,
-			MOBILENUMBER: MOBILENUMBER,
+		fmt.Println(err)
+	}
+
+	if err != nil {
+		fmt.Println("Error updating the database", "err", err)
+		return entity.Isuues{
+			ID:    "",
+			ISSUE: "",
 		}
 	}
-	defer stmt.Close()
 
-	row := stmt.QueryRowContext(
-		ctx,
-		sql.Named("Name", ID),
-		sql.Named("USERNAME", USERNAME),
-		sql.Named("MOBILENUMBER", MOBILENUMBER))
+	return issues
+}
 
-	var users entity.User
-	err = row.Scan(&users)
+func (p *UserRepository) ShowUsers() []*entity.User {
+	db := initDB()
+
+	users := make([]*entity.User, 0)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	rows, err := db.QueryContext(ctx, "SELECT ID, USERNAME, MOBILENUMBER FROM Users")
 	if err != nil {
-		return entity.User{
-			ID:           ID,
-			USERNAME:     USERNAME,
-			MOBILENUMBER: MOBILENUMBER,
+		return nil
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		user := new(entity.User)
+		err = rows.Scan(
+			&user.ID,
+			&user.USERNAME,
+			&user.MOBILENUMBER,
+		)
+
+		if err != nil {
+			return nil
 		}
+		users = append(users, user)
 	}
 
 	return users
 }
 
-func (p *UserRepository) CreateIssue(issues entity.Isuues) entity.Isuues {
-	ctx := context.Background()
-	var err error
-
-	if p.DB == nil {
-		err = errors.New("CreateEmployee: db is null")
-		return entity.Isuues{}
-	}
-	var ID string = ""
-	var ISSUE string = ""
-
-	ID = issues.ID
-	ISSUE = issues.ISSUE
-
-	//Check if database is alive.
-	err = p.DB.PingContext(ctx)
-	if err != nil {
-		return entity.Isuues{}
-	}
-
-	tsql := "INSERT INTO issues (ID, ISSUE) VALUES (@ID, @ISSUE);"
-
-	stmt, err := p.DB.Prepare(tsql)
-	if err != nil {
-		return entity.Isuues{}
-	}
-	defer stmt.Close()
-
-	row := stmt.QueryRowContext(
-		ctx,
-		sql.Named("Name", ID),
-		sql.Named("Name", ISSUE))
-	var issue entity.Isuues
-	err = row.Scan(&issues)
-	if err != nil {
-		return entity.Isuues{}
-	}
-
-	return issue
-}
-
-func (p *UserRepository) ShowUsers() int {
+func (p *UserRepository) ShowIssues() []*entity.Isuues {
 	db := initDB()
-	ctx := context.Background()
 
-	// Check if database is alive.
-	if db == nil {
-		return -1
-	}
+	users := make([]*entity.Isuues, 0)
 
-	err := db.PingContext(ctx)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	rows, err := db.QueryContext(ctx, "SELECT ID, ISSUE FROM issues")
 	if err != nil {
-		return -1
+		return nil
 	}
-
-	tsql := fmt.Sprintf("SELECT *FROM Users")
-
-	// Execute query
-	rows, err := db.QueryContext(ctx, tsql)
-	if err != nil {
-		return -1
-	}
-
 	defer rows.Close()
 
-	var count int
-
-	// Iterate through the result set.
 	for rows.Next() {
-		var ID, USERNAME, MOBILENUMBER string
+		user := new(entity.Isuues)
+		err = rows.Scan(
+			&user.ID,
+			&user.ISSUE,
+		)
 
-		// Get values from row.
-		err := rows.Scan(&ID, &USERNAME, &MOBILENUMBER)
 		if err != nil {
-			return -1
+			return nil
 		}
-
-		//fmt.Printf("ID: %d, Name: %s, Location: %s\n", ID, USERNAME, MOBILENUMBER)
-		count++
+		users = append(users, user)
 	}
 
-	return count
-}
-
-func (p *UserRepository) ShowIssues() int {
-	db := initDB()
-	ctx := context.Background()
-
-	// Check if database is alive.
-	if db == nil {
-		return -1
-	}
-
-	err := db.PingContext(ctx)
-	if err != nil {
-		return -1
-	}
-
-	tsql := fmt.Sprintf("SELECT *FROM issues")
-
-	// Execute query
-	rows, err := db.QueryContext(ctx, tsql)
-	if err != nil {
-		return -1
-	}
-
-	defer rows.Close()
-
-	var count int
-
-	// Iterate through the result set.
-	for rows.Next() {
-		var ID, ISSUE string
-
-		// Get values from row.
-		err := rows.Scan(&ID, &ISSUE)
-		if err != nil {
-			return -1
-		}
-
-		//fmt.Printf("ID: %d, Name: %s, Location: %s\n", ID, USERNAME, MOBILENUMBER)
-		count++
-	}
-
-	return count
+	return users
 }

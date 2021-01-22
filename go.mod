@@ -3,13 +3,14 @@ module GOLANG-REACT-NATIVE
 go 1.15
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
 	github.com/cengsin/oracle v1.0.0
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-goracle/go-oracledb v0.0.0-20191209211906-86e3ec8d9b3b // indirect
 	github.com/go-playground/validator/v10 v10.4.1 // indirect
 	github.com/godror/godror v0.23.1
 	github.com/golang/protobuf v1.4.3 // indirect
-	github.com/google/wire v0.4.0 // indirect
+	github.com/google/wire v0.4.0
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/json-iterator/go v1.1.10 // indirect
