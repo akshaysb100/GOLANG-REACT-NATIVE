@@ -1,9 +1,9 @@
 package main
 
 // import (
-// 	"GOLANG-REACT-NATIVE/controller"
-// 	"GOLANG-REACT-NATIVE/repositories"
-// 	"GOLANG-REACT-NATIVE/service"
+	// "GOLANG-REACT-NATIVE/controller"
+	// "GOLANG-REACT-NATIVE/repositories"
+	// "GOLANG-REACT-NATIVE/service"
 // 	"database/sql"
 
 // 	"github.com/google/wire"

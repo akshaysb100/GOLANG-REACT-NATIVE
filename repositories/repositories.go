@@ -10,7 +10,7 @@ import (
 	_ "github.com/godror/godror"
 )
 
-func initDB() *sql.DB {
+func (p *UserRepository) InitDB() *sql.DB {
 	db, err := sql.Open("godror", `user="akshay" password="password123" connectString="localhost:1521/ORCL"
                                libDir="/Users/akshaybavalekar/Downloads/instantclient_19_8"`)
 	if err != nil {
@@ -19,6 +19,10 @@ func initDB() *sql.DB {
 	return db
 }
 
+type PostRepostiory interface {
+	CreateUser(user entity.User) entity.User
+	ShowUsers() []*entity.User
+}
 type UserRepository struct {
 	DB *sql.DB
 }
@@ -27,46 +31,24 @@ func ProvideUserRepostiory(DB *sql.DB) UserRepository {
 	return UserRepository{DB: DB}
 }
 
-func (p *UserRepository) FindAll() {
-
-	rows, err := p.DB.Query("SELECT *FROM Users")
-	if err != nil {
-		fmt.Println(".....Error processing query")
-		fmt.Println(err)
-		return
-	}
-
-	var NAME, MOBILENUMBER string
-
-	for rows.Next() {
-		rows.Scan(&NAME, &MOBILENUMBER)
-		fmt.Println(NAME, MOBILENUMBER)
-	}
-}
-
 func (p *UserRepository) CreateUser(user entity.User) entity.User {
-	db := initDB()
+	db := p.InitDB()
 
 	sql := "INSERT INTO Users (ID, USERNAME, MOBILENUMBER) VALUES ( '" + user.ID + "', '" + user.USERNAME + "', '" + user.MOBILENUMBER + "' )"
 	_, err := db.Exec(sql)
 	if err != nil {
-		fmt.Println(err)
-	}
-
-	if err != nil {
-		fmt.Println("Error updating the database", "err", err)
+		// fmt.Println(err)
 		return entity.User{
 			ID:           "",
 			USERNAME:     "",
 			MOBILENUMBER: "",
 		}
 	}
-
 	return user
 }
 
 func (p *UserRepository) CreateIssue(issues entity.Isuues) entity.Isuues {
-	db := initDB()
+	db := p.InitDB()
 
 	sql := "INSERT INTO issues (ID, ISSUE) VALUES ( '" + issues.ID + "', '" + issues.ISSUE + "')"
 	_, err := db.Exec(sql)
@@ -86,7 +68,7 @@ func (p *UserRepository) CreateIssue(issues entity.Isuues) entity.Isuues {
 }
 
 func (p *UserRepository) ShowUsers() []*entity.User {
-	db := initDB()
+	db := p.InitDB()
 
 	users := make([]*entity.User, 0)
 
@@ -117,7 +99,7 @@ func (p *UserRepository) ShowUsers() []*entity.User {
 }
 
 func (p *UserRepository) ShowIssues() []*entity.Isuues {
-	db := initDB()
+	db := p.InitDB()
 
 	users := make([]*entity.Isuues, 0)
 
