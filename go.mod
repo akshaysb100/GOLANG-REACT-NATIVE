@@ -4,6 +4,7 @@ go 1.15
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
+	github.com/Valiben/gin_unit_test v0.0.0-20181205064931-674aee46d090
 	github.com/cengsin/oracle v1.0.0
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-goracle/go-oracledb v0.0.0-20191209211906-86e3ec8d9b3b // indirect
@@ -26,5 +27,5 @@ require (
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/goracle.v2 v2.24.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gorm.io/gorm v1.20.11 // indirect
+	gorm.io/gorm v1.20.11
 )
