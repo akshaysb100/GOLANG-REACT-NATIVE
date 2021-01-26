@@ -4,7 +4,6 @@ import (
 	"GOLANG-REACT-NATIVE/entity"
 	"GOLANG-REACT-NATIVE/service"
 	"GOLANG-REACT-NATIVE/usrmapper"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -31,7 +30,6 @@ func (p *UserAPI) CreateUser(c *gin.Context) {
 
 func (p *UserAPI) CreateIssues(c *gin.Context) {
 	var toIssues entity.Isuues
-	fmt.Println(toIssues)
 	err := c.BindJSON(&toIssues)
 	if err != nil {
 		c.Status(http.StatusBadRequest)
